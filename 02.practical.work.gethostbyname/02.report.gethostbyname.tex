@@ -1,19 +1,53 @@
-#report for labwork 2:
+Report for labwork 2:
 
-First of all, I ran 02.practical.work.gethostbyname.c on my computer
+First of all, I ran 02.practical.work.gethostbyname.c on my computer.
+Here is the result:
+
 khangthainguyen@Orp-koobcaM netprog2021 % ./a.out
  Please enter hostname: 
 google.com
 IP address is: 
 172.217.161.174
+
 khangthainguyen@Orp-koobcaM netprog2021 % ./a.out
  Please enter hostname: 
 usth.edu.vn
 IP address is: 
 119.17.215.232
+
 khangthainguyen@Orp-koobcaM netprog2021 % ./a.out
  Please enter hostname: 
 github.com
 IP address is: 
 192.30.255.112
 
+
+Then, I connected to my VM and ran the same file on it. 
+Here is the result:
+
+root@thai-networkprogramming-debian:~/02.practical.work.gethostbyname# ./a.out
+ Please enter hostname: 
+google.com
+IP address is: 
+172.217.194.102
+172.217.194.113
+172.217.194.100
+172.217.194.139
+172.217.194.138
+172.217.194.101
+
+root@thai-networkprogramming-debian:~/02.practical.work.gethostbyname# ./a.out
+ Please enter hostname: 
+usth.edu.vn
+IP address is: 
+119.17.215.232
+
+root@thai-networkprogramming-debian:~/02.practical.work.gethostbyname# ./a.out
+ Please enter hostname: 
+github.com
+IP address is: 
+192.30.255.112
+
+When running on my computer, google.com has only 1 IP address while it has 6 different IP addresses when I ran on my VM.
+On the other hand, both usth.edu.vn and github.com have the same IP address (119.17.215.232 for usth.edu.vn and 192.30.255.112
+for github.com) on both of my computer and my VM.
