@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <netdb.h>
 #include <sys/types.h>
 
 int main(int argc, char const *argv[]) {
     int sockfd, clen, clientfd;
     struct sockaddr_in saddr, caddr;
     struct hostent *hostname;
+    char *ipaddr;
     unsigned short port = 8784;
 
     // int socket(int domain, int type, int protocol)
@@ -31,7 +33,9 @@ int main(int argc, char const *argv[]) {
 	printf("IP address is: \n");
 
     if (!hostname) {
-        printf("Can not find ip.");
+        printf("Host unknown.");
+        ipaddr = inet_ntoa(*(struct in_addr *)hostname->h_name);
+        printf(hostname->h_name, ipaddr);
     }
     else {
 	    for (unsigned int i=0; hostname->h_addr_list[i] != NULL; i++){
@@ -41,14 +45,17 @@ int main(int argc, char const *argv[]) {
 
     memset(&saddr, 0, sizeof(saddr));
     saddr.sin_family = AF_INET;
-    memcpy((char *) &saddr.sin_addr.s_addr, h->h_addr_list[0], h->h_length)
+    memcpy((char *) &saddr.sin_addr.s_addr, hostname->h_addr_list[0], hostname->h_length);
     saddr.sin_port = htons(port);
 
 
     //int connect(int sockfd, const struct sockaddr *saddr, socklen_t addrlen)
     if (connect(sockfd, (struct sockaddr *) &saddr, sizeof(saddr)) < 0) {
-        printf(“Cannot connect\n”);
+        printf("Cannot connect");
         return -1;
+    }
+    else {
+        printf("Successfully connected!");
     }
     return 0;
 }
