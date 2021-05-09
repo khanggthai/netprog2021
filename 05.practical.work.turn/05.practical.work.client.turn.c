@@ -1,10 +1,11 @@
-#include <sys/socket.h>
-#include <arpa/inet.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <netdb.h>
-#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 int main(int argc, char const *argv[]) {
     int sockfd, clen, clientfd;
@@ -12,6 +13,7 @@ int main(int argc, char const *argv[]) {
     struct hostent *hostname;
     char *ipaddr;
     unsigned short port = 8784;
+    char sms[50];
 
     // int socket(int domain, int type, int protocol)
     if ((sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -51,10 +53,14 @@ int main(int argc, char const *argv[]) {
     //int connect(int sockfd, const struct sockaddr *saddr, socklen_t addrlen)
     if (connect(sockfd, (struct sockaddr *) &saddr, sizeof(saddr)) < 0) {
         printf("Cannot connect");
+        close(sockfd);
         return -1;
     }
-    else {
-        printf("Successfully connected!");
-    }
-    return 0;
+    while (1) {
+        scanf("Client: ", sms);
+        write(sockfd, sms, sizeof(sms));
+        if (read(sockfd, sms, sizeof(sms)) > 0) {
+            printf("Server: %s", sms);
+        }
+    }  
 }
