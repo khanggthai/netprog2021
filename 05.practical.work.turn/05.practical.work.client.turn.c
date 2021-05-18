@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
 		hostname = gethostbyname(argv[1]);
 	}
     else {
-        printf("%s\n", " Please enter hostname: ");
+        printf("Please enter hostname: \n");
         char str[50];
         scanf("%s", str);
         hostname = gethostbyname(str);
