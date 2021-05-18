@@ -57,7 +57,6 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
     while (1) {
-        char sms[100];
         memset(sms, 0, 100);
         printf("Client: ");
         fgets(sms, 100, stdin);
