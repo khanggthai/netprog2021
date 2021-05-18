@@ -25,11 +25,11 @@ int main(int argc, char const *argv[]) {
 	if(argc == 2) {
 		hostname = gethostbyname(argv[1]);
 	}
-	else {
-		printf("%s\n", " Please enter hostname: ");
-		char str[50];
-		scanf("%s", str);
-		hostname = gethostbyname(str);
+    else {
+        printf("%s\n", " Please enter hostname: ");
+        char str[50];
+        scanf("%s", str);
+        hostname = gethostbyname(str);
 	}
 
 	printf("IP address is: \n");
@@ -40,8 +40,8 @@ int main(int argc, char const *argv[]) {
         printf(hostname->h_name, ipaddr);
     }
     else {
-	    for (unsigned int i=0; hostname->h_addr_list[i] != NULL; i++){
-		    printf("%s\n", inet_ntoa( *(struct in_addr*)(hostname->h_addr_list[i])));
+        for (unsigned int i=0; hostname->h_addr_list[i] != NULL; i++){
+            printf("%s\n", inet_ntoa( *(struct in_addr*)(hostname->h_addr_list[i])));
         }
     }
 
@@ -57,10 +57,15 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
     while (1) {
-        scanf("Client: ", sms);
+        char sms[100];
+        memset(sms, 0, 100);
+        printf("Client: ");
+        fgets(sms, 100, stdin);
+
         write(sockfd, sms, sizeof(sms));
-        if (read(sockfd, sms, sizeof(sms)) > 0) {
-            printf("Server: %s", sms);
+        read(sockfd, sms, sizeof(sms)) > 0);
+        sms[sizeof(sms) - 1] =0;
+        printf("Server: %s", sms);
         }
-    }  
+    } 
 }

@@ -6,7 +6,7 @@
 #include <sys/types.h>
 
 int main(int argc, char const *argv[]) {
-    char sms[50]
+    char sms[50];
     int sockfd, clen, clientfd;
     struct sockaddr_in saddr, caddr;
     unsigned short port = 8784;
@@ -37,12 +37,13 @@ int main(int argc, char const *argv[]) {
             return -1;
         } 
         while (1) {
-            if (read(clientfd, sms, sizeod(sms)) > 0) {
-                printf("Client: %s\n", sms);
-            }
+            char sms[100];
+            memset(sms, 0.  100);
+            sms[sizeof(sms) - 1] = 0;
+            printf("Client: %s\n", sms);
             printf("Server: ");
-            scanf("-", sms);
-            write(clientd, sms, sizeof(sms))
+            fgets(sms, 100, stdin);
+            write(clientfd, sms, sizeof(sms));
         }
     }
 }
