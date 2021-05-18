@@ -38,11 +38,11 @@ int main(int argc, char const *argv[]) {
         } 
         while (1) {
             memset(sms, 0, 100);
-            sms[sizeof(sms) - 1] = 0;
+            sms[strlen(sms) - 1] = 0;
             printf("Client: %s\n", sms);
             printf("Server: ");
             fgets(sms, 100, stdin);
-            write(clientfd, sms, sizeof(sms));
+            write(clientfd, sms, strlen(sms));
         }
     }
 }

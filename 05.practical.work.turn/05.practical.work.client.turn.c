@@ -61,9 +61,9 @@ int main(int argc, char const *argv[]) {
         printf("Client: ");
         fgets(sms, 100, stdin);
 
-        write(sockfd, sms, sizeof(sms));
-        read(sockfd, sms, sizeof(sms)) > 0);
-        sms[sizeof(sms) - 1] =0;
+        write(sockfd, sms, strlen(sms));
+        read(sockfd, sms, strlen(sms)) > 0);
+        sms[strlen(sms) - 1] =0;
         printf("Server: %s", sms);
         }
     } 
