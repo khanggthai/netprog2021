@@ -63,13 +63,18 @@ int main(int argc, char const *argv[]) {
         fgets(buffer,255,stdin);
         int n = 0;            
         n = write(sockfd, buffer, strlen(buffer));
+        while (fgets(buffer, 255, stdin) != 0){ 
+            if (scanf("%255[^\n]", buffer) == 1) {
+                printf("Found <<%s>>\n", buffer);
+            }
+        }
         if (n < 0) {
-            printf("ERROR writing to socket");
+            printf("Cannot write to socket");
         }
         bzero(buffer,256);
         n = read(sockfd, buffer, 255);
         if (n < 0) {
-            printf("ERROR reading from socket");
+            printf("Cannot read from socket");
         }
         printf("%s\n", buffer);
         close(sockfd);

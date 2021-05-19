@@ -44,6 +44,11 @@ int main(int argc, char const *argv[]) {
             send(clientfd, "Hello, world!%s\n", 13,0);
             printf("Server got connected.");
             int  n = 0;
+            while (fgets(buffer, 255, stdin) != 0){ 
+                if (scanf("%255[^\n]", buffer) == 1) {
+                    printf("Found <<%s>>\n", buffer);
+                }
+            }
             n = read(clientfd,buffer,255);
             if (n < 0){
                 printf("ERROR reading from socket");
