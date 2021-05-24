@@ -49,8 +49,7 @@ int main(int argc, char const *argv[]) {
                     printf("Found <<%s>>\n", buffer);
                 }
             }
-            n = read(clientfd,buffer,255);
-            if (n < 0){
+            n = read(clientfd,buffer,255);o
                 printf("ERROR reading from socket");
             }
             printf("Client: %s\n",buffer);
