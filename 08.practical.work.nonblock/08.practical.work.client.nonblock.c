@@ -5,7 +5,10 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <poll.h>
 #include <string.h>
+#include <fcntl.h>
+
 
 int main(int argc, char const *argv[]) {
     int sockfd, clen, clientfd;
@@ -57,16 +60,28 @@ int main(int argc, char const *argv[]) {
         close(sockfd);
         return -1;
     }
+
+    int fl = fcntl(sockfd, F_GETFL, 0);
+    fl |= O_NONBLOCK;
+    fcntl(sockfd, F_SETFL, fl);
+
     while (1) {
         printf("Enter the bufferage: ");
         while (fgets(buffer, 255, stdin) != 0){ 
             if (scanf("%255[^\n]", buffer) == 1) {
                 printf("Found <<%s>>\n", buffer);
             }
-        memset(buffer, 0, sizeof buffer);
-        printf("Client: ");
+        struct pollfd input[1] = {{.fd = 0, .events = POLLIN}};
+        if (poll(input, 1, 100) > 0) {
+            printf("Client: ");
+            fgets(buffer, sizeof buffer, stdin);
+            buffer[strlen(buffer) - 1] = 0;
+            write(sockfd, buffer, strlen(buffer));
+        }
+
         fgets(buffer, sizeof buffer, stdin);
         buffer[strlen(buffer) - 1] = 0;
+        
         if (strcmp(buffer, "/quit") == 0) {
             printf("Client disconnected\n");
             shutdown(sockfd, SHUT_RDWR);
