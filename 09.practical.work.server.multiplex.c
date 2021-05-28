@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include <poll.h>
 #include <sys/select.h>
+#include <fcntl.h>
 
 int main(int argc, char const *argv[]) {
     int sockfd, clen, clientfd;
@@ -16,12 +17,16 @@ int main(int argc, char const *argv[]) {
     unsigned short port = 8784;
     char buffer[256];
     int clientfds[100];
+    int MAX_CLIENT = 100;
 
     if ((sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("Error creating socket");
         return -1;
     }
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
+    int fl = fcntl(sockfd, F_GETFL, 0);
+    fl |= O_NONBLOCK;
+    fcntl(sockfd, F_SETFL, fl);
 
     memset(clientfds, 0, sizeof(clientfds));
 
@@ -75,7 +80,7 @@ int main(int argc, char const *argv[]) {
                 }
             }
 
-            for (i = 0; i < MAX_CLIENT; i++) {
+            for (int i = 0; i < MAX_CLIENT; i++) {
                 send(clientfd, "Hello!%s\n", 13,0);
                 printf("Server connected.");
             
@@ -85,10 +90,10 @@ int main(int argc, char const *argv[]) {
                     }
                 }
                 if (clientfds[i] > 0 && FD_ISSET(clientfds[i], &set)) {
-                    if (read(clientfds[i], buffer, sizeof(s)) <= 0) {
+                    if (read(clientfds[i], buffer, sizeof(buffer)) <= 0) {
                         printf("Client %d disconnected", clientfds[i]);
                     }
-                    printf("Client %d say: \n", clientfds[i], buffer);
+                    printf("Client %d say: \n%s", clientfds[i], buffer);
 
                     struct pollfd input[1] = {{.fd = 0, .events = POLLIN}};
                     if (poll(input, 1, 100) > 0) {
@@ -103,3 +108,4 @@ int main(int argc, char const *argv[]) {
             }
         }
     }
+}
