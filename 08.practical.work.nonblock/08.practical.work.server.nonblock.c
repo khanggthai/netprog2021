@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <poll.h>
+#include <fcntl.h>
 
 int main(int argc, char const *argv[]) {
     int sockfd, clen, clientfd;
