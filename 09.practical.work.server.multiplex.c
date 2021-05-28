@@ -22,9 +22,6 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
-    int fl = fcntl(sockfd, F_GETFL, 0);
-    fl |= O_NONBLOCK;
-    fcntl(sockfd, F_SETFL, fl);
 
     memset(clientfds, 0, sizeof(clientfds));
 
@@ -59,9 +56,13 @@ int main(int argc, char const *argv[]) {
                 if (clientfds[i] > maxfd) maxfd = clientfds[i];
             }
             select(maxfd+1, &set, NULL, NULL, NULL);
+            
             if (FD_ISSET(sockfd, &set)) {
-                clientfd = accept(sockfd, (struct sockaddr *) &saddr, &clen);
-                
+                clen=sizeof(caddr);
+                if ((clientfd=accept(sockfd, (struct sockaddr *) &caddr, &clen)) < 0) {
+                    printf("Error accepting connection.\n");
+                    return -1;
+                }
                 fl = fcntl(clientfd, F_GETFL, 0);
                 fl |= O_NONBLOCK;
                 fcntl(clientfd, F_SETFL, fl);
@@ -73,15 +74,31 @@ int main(int argc, char const *argv[]) {
                     }
                 }
             }
+
             for (i = 0; i < MAX_CLIENT; i++) {
-                if (clientfds[i] > 0 && FD_ISSET(clientfds[i], &set)) {
-                    if (read(clientfds[i], s, sizeof(s)) > 0) {
-                        printf("client %d says: %s\nserver>", clientfds[i], s);
+                send(clientfd, "Hello!%s\n", 13,0);
+                printf("Server connected.");
+            
+                while (fgets(buffer, 255, stdin) != 0){ 
+                    if (scanf("%255[^\n]", buffer) == 1) {
+                        printf("Found <<%s>>\n", buffer);
                     }
-                    else {
-                        printf("client %d has disconnected.\n", clientfds[i]);
+                }
+                if (clientfds[i] > 0 && FD_ISSET(clientfds[i], &set)) {
+                    if (read(clientfds[i], buffer, sizeof(s)) <= 0) {
+                        printf("Client %d disconnected", clientfds[i]);
+                    }
+                    printf("Client %d say: \n", clientfds[i], buffer);
+
+                    struct pollfd input[1] = {{.fd = 0, .events = POLLIN}};
+                    if (poll(input, 1, 100) > 0) {
+                        printf("Server: ");
+                        fgets(buffer, sizeof buffer, stdin);
+                        buffer[255] = 0;
+
+                        write(clientfds[i], buffer, 255);
                         clientfds[i] = 0;
-                    }                   
+                    }           
                 }   
             }
         }
